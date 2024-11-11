@@ -5,10 +5,9 @@ name: Kernel CI
 on:
   push:
     branches:
-      - android12-5.10
+      - cancunf-5.10
 
   workflow_dispatch:
-  schedule: [cron: '0 0 * * 0']
 
 jobs:
   kernel-build:
@@ -30,21 +29,20 @@ jobs:
           df -h
 
       - name: Lets compile
+        env:
+            TOKEN: ${{ secrets.GIT_TOKEN }}
         run: |
           mkdir kernel
           cd kernel
-          repo init -u https://android.googlesource.com/kernel/manifest.git -b common-android12-5.10-lts --depth=1
+          repo init -u https://github.com/sarthakroy2002/kernel_manifest.git -b android12-5.10-cancunf --depth=1 -u sarthakroy2002 -p $TOKEN
           repo sync --force-sync
-          ln -s common/build.config.gki.aarch64 build.config
-          cd common
-          sed -i "s|Image.lz4|Image.gz|g" build.config.gki.aarch64
+          cd kernel-5.10
           sed -i "s|CONFIG_LTO_CLANG_FULL=y|CONFIG_LTO_CLANG_THIN=y|g" arch/arm64/configs/gki_defconfig
-          wget https://gist.githubusercontent.com/sarthakroy2002/4e1c6bc5b5745168f1d47f4eb1bb25d6/raw/1a70b2aa9c401262de2dad03f8231b3f03d5325d/uncommitted.patch
-          patch -p1 < uncommitted.patch
           cd ..
           echo "Compile starting..."
           bash build/build.sh
           echo "Compilied..."
+          ls out/android12-5.10/dist > list.txt
           git clone https://github.com/sarthakroy2002/AnyKernel3 -b android12-5.10 
           cp -r out/android12-5.10/dist/Image.gz AnyKernel3
           cd AnyKernel3
@@ -56,3 +54,4 @@ jobs:
           path: |
             kernel/AnyKernel3/android12-5.10-AnyKernel3.zip
             kernel/out/android12-5.10/dist/Image.gz
+            kernel/list.txt
