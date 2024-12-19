@@ -17,8 +17,8 @@ jobs:
     steps:
       - name: Initializing environment
         run: |
-          git config --global user.name "sarthakroy2002"
-          git config --global user.email "sarthakroy2002@gmail.com"
+          git config --global user.name "Koushikdey2003"
+          git config --global user.email "kousickdey3@gmail.com"
           df -h
           ld --version
           gcc -v
@@ -33,7 +33,7 @@ jobs:
         run: |
           mkdir kernel
           cd kernel
-          repo init -u https://android.googlesource.com/kernel/manifest.git -b common-android12-5.10-lts --depth=1
+          repo init -u https://android.googlesource.com/kernel/manifest.git -b common-android13-5.15-lts --depth=1
           repo sync --force-sync
           ln -s common/build.config.gki.aarch64 build.config
           cd common
@@ -45,14 +45,14 @@ jobs:
           echo "Compile starting..."
           bash build/build.sh
           echo "Compilied..."
-          git clone https://github.com/sarthakroy2002/AnyKernel3 -b android12-5.10 
-          cp -r out/android12-5.10/dist/Image.gz AnyKernel3
+          git clone https://github.com/Koushikdey2003/AnyKernel3 -b android13-5.15
+          cp -r out/android13-5.15/dist/Image.gz AnyKernel3
           cd AnyKernel3
-          zip -r9 android12-5.10-AnyKernel3.zip ./*
+          zip -r9 android13-5.15-AnyKernel3.zip ./*
 
       - uses: actions/upload-artifact@v3
         with:
-          name: android12-5.10 Flashable Zip and Kernel Binary
+          name: android13-5.15 Flashable Zip and Kernel Binary
           path: |
-            kernel/AnyKernel3/android12-5.10-AnyKernel3.zip
-            kernel/out/android12-5.10/dist/Image.gz
+            kernel/AnyKernel3/android13-5.15-AnyKernel3.zip
+            kernel/out/android13-5.15/dist/Image.gz
