@@ -50,7 +50,7 @@ jobs:
           git clone $REPO -b $BRANCH kernel 
           cd kernel
           if [ "${DEVICE}" = "RMX2020" ]; then
-            wget https://raw.githubusercontent.com/sarthakroy2002/Scripts/main/Kernel/C3_build_script.sh
+            wget https://raw.githubusercontent.com/Koushikdey2003/Scripts/main/Kernel/C3_build_script.sh
             bash C3_build_script.sh
           elif [ "${DEVICE}" = "cancunf" ] || [ "${GKI}" = "true" ]; then
             wget https://raw.githubusercontent.com/sarthakroy2002/Scripts/main/Kernel/cancunf_gki_build_script.sh
