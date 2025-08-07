@@ -59,11 +59,3 @@ jobs:
             wget https://raw.githubusercontent.com/sarthakroy2002/Scripts/main/Kernel/cancunf_build_script.sh
             bash cancunf_build_script.sh
           fi
-
-          if [ "${DEVICE}" = "air" ] || [ "${GKI}" = "true" ]; then
-            wget https://raw.githubusercontent.com/Koushikdey2003/Scripts/main/Kernel/air_gki_build_script.sh
-            bash air_gki_build_script.sh
-          else
-            wget https://raw.githubusercontent.com/Koushikdey2003/Scripts/main/Kernel/air_build_script.sh
-            bash air_build_script.sh
-          fi
