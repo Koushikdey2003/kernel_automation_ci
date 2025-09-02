@@ -1,20 +1,19 @@
 # Kernel compile workflow
-
 name: Kernel CI
 
 on:
   push:
     branches:
-      - android13-5.15
+      - air-5.15
 
   workflow_dispatch:
-  schedule: [cron: '0 0 * * 0']
 
 jobs:
   kernel-build:
     runs-on: ubuntu-22.04
 
     steps:
+      - uses: actions/checkout@v4
       - name: Initializing environment
         run: |
           git config --global user.name "Koushikdey2003"
@@ -23,29 +22,26 @@ jobs:
           ld --version
           gcc -v
           ar --version
-          sudo apt update
-          sudo apt install -y bc bison build-essential ccache curl flex glibc-source g++-multilib gcc-multilib binutils-aarch64-linux-gnu git gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses5 libncurses5-dev libsdl1.2-dev libssl-dev libwxgtk3.0-gtk3-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev python2 tmate ssh neofetch
+          sudo apt update -y
+          sudo apt install -y bc bison build-essential ccache curl flex glibc-source g++-multilib gcc-multilib binutils-aarch64-linux-gnu git gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses5 libncurses5-dev libsdl1.2-dev libssl-dev libwxgtk3.0-gtk3-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev python-is-python3 tmate ssh neofetch
           sudo apt-get install repo -y
+          repo --version
           neofetch
           df -h
 
       - name: Lets compile
+        env:
+          TOKEN: ${{ secrets.GIT_TOKEN }}
         run: |
           mkdir kernel
           cd kernel
-          repo init -u https://android.googlesource.com/kernel/manifest.git -b common-android13-5.15-lts --depth=1
+          repo init -u https://github.com/Koushikdey2003/kernel_manifest-air-5.15.git -b common-android13-5.15 --depth=1
           repo sync --force-sync
-          ln -s common/build.config.gki.aarch64 build.config
-          cd common
-          sed -i "s|Image.lz4|Image.gz|g" build.config.gki.aarch64
-          sed -i "s|CONFIG_LTO_CLANG_FULL=y|CONFIG_LTO_CLANG_THIN=y|g" arch/arm64/configs/gki_defconfig
-          wget https://gist.githubusercontent.com/sarthakroy2002/4e1c6bc5b5745168f1d47f4eb1bb25d6/raw/1a70b2aa9c401262de2dad03f8231b3f03d5325d/uncommitted.patch
-          patch -p1 < uncommitted.patch
-          cd ..
           echo "Compile starting..."
-          bash build/build.sh
+          BUILD_CONFIG=kernel-5.15/build.config.mtk.aarch64.mgk build/build.sh
           echo "Compilied..."
-          git clone https://github.com/Koushikdey2003/AnyKernel3 -b android13-5.15
+          ls out/android13-5.15/dist > list.txt
+          git clone https://github.com/Koushikdey2003/AnyKernel3 -b air --depth=1
           cp -r out/android13-5.15/dist/Image.gz AnyKernel3
           cd AnyKernel3
           zip -r9 android13-5.15-AnyKernel3.zip ./*
