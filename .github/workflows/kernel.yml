@@ -14,6 +14,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
       - name: Initializing environment
         run: |
           git config --global user.name "Koushikdey2003"
@@ -28,6 +31,9 @@ jobs:
           repo --version
           neofetch
           df -h
+          ccache -M 100G
+          export USE_CCACHE=1
+          ccache --show-stats
 
       - name: Lets compile
         env:
@@ -40,6 +46,8 @@ jobs:
           echo "Compile starting..."
           BUILD_CONFIG=kernel-5.15/build.config.mtk.aarch64.mgk build/build.sh
           echo "Compilied..."
+          ccache --show-stats
+          ccache --show-config
           ls out/android13-5.15/dist > list.txt
           git clone https://github.com/Koushikdey2003/AnyKernel3 -b air --depth=1
           cp -r out/android13-5.15/dist/Image.gz AnyKernel3
@@ -52,3 +60,5 @@ jobs:
           path: |
             kernel/AnyKernel3/android13-5.15-AnyKernel3.zip
             kernel/out/android13-5.15/dist/Image.gz
+            kernel/out/android13-5.15/dist/mt6835.dtb
+            kernel/list.txt
